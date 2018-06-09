@@ -1,36 +1,42 @@
 var Sameness = function() {
     /* <==  P R I V A T E   M E M B E R S  ==> */
     
+    function _run(f, a, t, c) {
+        var cr = null;
+
+        c.iSI();
+        
+        this.tk.db(" _run[stack:" + c.gSI() + "] => method: " + this.tk.iS.v(c.gF()) + "; args: " + this.tk.iS.v(c.gA()) + ";");
+
+        cr = f.apply(t, a);
+
+        return cr;
+    }
+
     /**
      * 
      * @param {*} a first object from comparing pair
      * @param {*} b second object from comparing pair
-     * @param {Sameness.context} ctx Sameness context instance
+     * @param {Sameness.context} c Sameness context instance
      * @description
      * cr: current result;
      * ap: {a} properties;
      * ab: {b} properties;
      */
-    function _isEqual(a, b, ctx) {
+    function _isEqual(a, b, c) {
         var cr;
 
-        ctx.iSI();
-
         cr = (a == b);
-
-        this.tk.db(this.tk.iS.kV("cr", cr) + " Ss.iE(" + a + ", " + b + ", " + this.tk.iS.st(ctx) + ")");
 
         if (!cr) {
             var ap = this.tk.gP(a);
             var bp = this.tk.gP(b);
 
-            this.tk.db(this.tk.iS.kV("cr", cr) + " Ss.iE(" + a + ", " + b + ", " + this.tk.iS.st(ctx) + ") :: " + this.tk.iS.kV("ap.length", ap.length) + " == " + this.tk.iS.kV("bp.length", bp.length) + " :: " + (ap.length == bp.length) + " // " + this.tk.iS.kV("ap.length + bp.length > 0", ap.length + bp.length > 0));
-            
             if (ap.length == bp.length && ap.length + bp.length > 0) {
                 cr = true;
 
                 for (var i = 0; i < ap.length; i++) {
-                    if (ap[i] != bp[i] || !this.iE(a[ap[i]], b[bp[i]], ctx + 1)) {
+                    if (ap[i] != bp[i] || !this.iE(a[ap[i]], b[bp[i]], c)) {
                         cr = false;
                         break;
                     }
@@ -43,10 +49,10 @@ var Sameness = function() {
     
     /* <==  P U B L I C   M E M B E R S  ==> */
 
-    this.isEqual = function(a, b) {
-        var ctx = new this.ctx("isEqual");
+    this.isEqual = function(a, b, c) {
+        if (c === undefined) c = new this.ctx("isEqual", [ a, b ]);
         
-        return _isEqual(a, b, 0);
+        return _run(_isEqual, [ a, b, c ], this, c);
     };
     this.iE = this.isEqual;
 
@@ -82,11 +88,19 @@ var Sameness = function() {
 
         this.infoStrings = function() {
             this.value = function(c) {
+                if (c instanceof Object) {
+                    c = JSON.stringify(c);
+                }
+                
                 return "[Ss[" + c + "]]";
             };
             this.v = this.value;
             
             this.keyValue = function(k, v) {
+                if (v instanceof Object) {
+                    v = JSON.stringify(v);
+                }
+                
                 return this.v(k + ": " + v);
             };
             this.kV = this.keyValue;
@@ -102,7 +116,7 @@ var Sameness = function() {
 
         this.text = function() {
             this.padLeft = function(t, p, l) {
-                var cr = t;
+                var cr = String(t);
                 var pFLT = l - t.length;
                 
                 if (pFLT > 0) {
@@ -127,9 +141,15 @@ var Sameness = function() {
     }();
     this.tk = this.toolkit;
 
-    this.context = function(r, a, sI) {
-        var timestamp = t;
-        var stackIndex = sI;
+    /**
+     * 
+     * @param {function} f Calling function
+     * @param {array} a Arguments array
+     * @param {number} sI Stack index
+     */
+    this.context = function(f, a) {
+        var timestamp;
+        var stackIndex = 0;
 
         (function() {
             var currentDate = new Date();
@@ -143,6 +163,8 @@ var Sameness = function() {
                 this.tk.tx.pL(currentDate.getUTCSeconds(), "0", 2) +
                 this.tk.tx.pL(currentDate.getUTCMilliseconds(), "0", 2);
         })();
+
+        this.info = "Sameness.context";
 
         this.getTimestamp = function() {
             return timestamp;
@@ -159,6 +181,16 @@ var Sameness = function() {
         };
         this.iSI = this.incrementStackIndex;
 
+        this.getFunction = function() {
+            return f;
+        };
+        this.gF = this.getFunction;
+
+        this.getArguments = function() {
+            return a;
+        };
+        this.gA = this.getArguments;
+
         return this;
     };
     this.ctx = this.context;
@@ -168,8 +200,8 @@ var Sameness = function() {
 
 var Ss = Sameness;
 
-var a = { p: 1 };
-var b = { p: 1, w: 2 };
+var a = { p: 1, p2: [ 2, 3 ] };
+var b = { p: 1, p2: [ 3, 2 ] };
 var c = a;
 
 console.log(Ss.isEqual(a, b));
