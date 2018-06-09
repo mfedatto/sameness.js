@@ -19,8 +19,14 @@ var Sameness = (function() {
         return cr;
     }
 
+    function _isSame(a, b, c) {
+        var cr = (a === b);
+        
+        return cr;
+    }
+
     /**
-     * 
+     * Verifies if two objects are identical
      * @param {*} a first object from comparing pair
      * @param {*} b second object from comparing pair
      * @param {Sameness.context} c Sameness context instance
@@ -29,7 +35,7 @@ var Sameness = (function() {
      * ap: {a} properties;
      * ab: {b} properties;
      */
-    function _isEqual(a, b, c) {
+    function _isIdentic(a, b, c) {
         var cr;
 
         cr = (a == b);
@@ -43,7 +49,7 @@ var Sameness = (function() {
                     cr = true;
 
                     for (var i = 0; i < ap.length; i++) {
-                        if (ap[i] != bp[i] || !this.iE(a[ap[i]], b[bp[i]], c)) {
+                        if (ap[i] != bp[i] || !this.iI(a[ap[i]], b[bp[i]], c)) {
                             cr = false;
                             break;
                         }
@@ -55,7 +61,7 @@ var Sameness = (function() {
                     cr = true;
 
                     for (var j = 0; j < a.length; j++) {
-                        if (!this.iE(a[j], b[j], c)) {
+                        if (!this.iI(a[j], b[j], c)) {
                             cr = false;
                             break;
                         }
@@ -69,17 +75,19 @@ var Sameness = (function() {
     
     /* <==  P U B L I C   M E M B E R S  ==> */
 
-    this.isEqual = function(a, b, c) {
-        c = new this.ctx("isEqual", [ a, b ], c);
-        
-        return _run(_isEqual, [ a, b, c ], this, c);
-    };
-    this.iE = this.isEqual;
-
     this.isSame = function(a, b) {
-        return a === b;
+        c = new this.ctx("isSame", [ a, b ], c);
+        
+        return _run(_isSame, [ a, b, c ], this, c);
     };
     this.iS = this.isSame;
+
+    this.isIdentic = function(a, b, c) {
+        c = new this.ctx("isIdentic", [ a, b ], c);
+        
+        return _run(_isIdentic, [ a, b, c ], this, c);
+    };
+    this.iI = this.isIdentic;
 
     this.isEquivalent = function(a, b) {
         return 0;
@@ -146,7 +154,7 @@ var Sameness = (function() {
                     5) +
                 "] ";
             
-            console.log(sufix + m);
+            this.out(sufix + m);
         };
         this.db = this.debug;
 
@@ -243,6 +251,46 @@ var Sameness = (function() {
         return this;
     });
     this.ctx = this.context;
+
+    this.settings = (function() {
+        this.verbosity = (function() {
+            var level = 0;
+
+            this.getQuietIndex = function() {
+                return 0;
+            };
+
+            this.getErrorIndex = function() {
+                return 10;
+            };
+
+            this.getWarningIndex = function() {
+                return 20;
+            };
+
+            this.getLogIndex = function() {
+                return 30;
+            };
+
+            this.getInfoIndex = function() {
+                return 40;
+            };
+
+            this.getAuditIndex = function() {
+                return 50;
+            };
+
+            this.getDebugIndex = function() {
+                return 60;
+            };
+        })();
+        this.vb = this.verbosity;
+    })();
+    this.st = this.settings;
+
+    this.out = function(m) {
+        console.log(m);
+    };
 
     return this;
 })();
