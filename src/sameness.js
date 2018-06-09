@@ -2,19 +2,27 @@ var Sameness = (function() {
     /* <==  P R I V A T E   M E M B E R S  ==> */
     
     function _run(f, a, t, c) {
+        function _audit(m) {
+            this.tk.ad(m, c);
+        }
+
         function _debug(m) {
-            this.tk.db("_run => method: " + c.gF() + "; " + m, c);
+            this.tk.db("Ss => method: " + c.gF() + "; " + m, c);
         }
         
         var cr = null;
 
+        _debug("incrementing context stack index.");
+
         c.iSI();
         
+        _audit(c.gF() + "(" + this.tk.oS(c.gA()) + ")");
         _debug("args: " + this.tk.oS(c.gA()) + ";");
 
         cr = f.apply(t, a);
 
-        _debug("result: " + this.tk.oS(cr) + ";");
+        _debug("args: " + this.tk.oS(c.gA()) + "; result: " + this.tk.oS(cr) + ";");
+        _audit(c.gF() + "(" + this.tk.oS(c.gA()) + ") :: " + cr);
 
         return cr;
     }
@@ -36,16 +44,34 @@ var Sameness = (function() {
      * ab: {b} properties;
      */
     function _isIdentic(a, b, c) {
+        function _audit(m) {
+            this.tk.ad("Ss.iI => " + m, c);
+        }
+        
+        function _debug(m) {
+            this.tk.db("Ss.iI => " + m, c);
+        }
+
         var cr;
 
         cr = (a == b);
 
-        if (!cr) {
+        if (cr) {
+            _audit("comparing arguments are not objects neither array.");
+            _debug("comparing arguments are not objects neither array.");
+        }
+        else {
             if (this.tk.iONA(a) && this.tk.iONA(b)) {
+                _audit("comparing arguments are objects but not array.");
+                _debug("comparing arguments are objects but not array.");
+
                 var ap = this.tk.gP(a, c);
                 var bp = this.tk.gP(b, c);
 
                 if (ap.length == bp.length && ap.length + bp.length > 0) {
+                    _audit("comparing arguments has the same properties count.");
+                    _debug("comparing arguments has the same properties count.");
+
                     cr = true;
 
                     for (var i = 0; i < ap.length; i++) {
@@ -58,6 +84,9 @@ var Sameness = (function() {
             }
             else {
                 if (a.length == b.length && a.length + b.length > 0) {
+                    _audit("comparing arguments are array.");
+                    _debug("comparing arguments are array.");
+
                     cr = true;
 
                     for (var j = 0; j < a.length; j++) {
@@ -67,6 +96,10 @@ var Sameness = (function() {
                         }
                     }
                 }
+                else {
+                    _audit("comparing arguments are not objects neither array.");
+                    _debug("comparing arguments are not objects neither array.");
+                }
             }
         }
 
@@ -75,7 +108,7 @@ var Sameness = (function() {
     
     /* <==  P U B L I C   M E M B E R S  ==> */
 
-    this.isSame = function(a, b) {
+    this.isSame = function(a, b, c) {
         c = new this.ctx("isSame", [ a, b ], c);
         
         return _run(_isSame, [ a, b, c ], this, c);
@@ -90,17 +123,17 @@ var Sameness = (function() {
     this.iI = this.isIdentic;
 
     this.isEquivalent = function(a, b) {
-        return 0;
+        throw { message: "Not implemented yet!" };
     };
     this.iEv = this.isEquivalent;
 
     this.isSubset = function(a, b) {
-        return 0;
+        throw { message: "Not implemented yet!" };
     };
     this.iSb = this.isSubset;
 
     this.isSuperset = function(a, b) {
-        return 0;
+        throw { message: "Not implemented yet!" };
     };
     this.iSp = this.isSuperset;
 
@@ -120,48 +153,53 @@ var Sameness = (function() {
         };
         this.gP = this.getProps;
 
-        this.isObject = function(o) {
-            return (o instanceof Object);
-        };
+        this.isObject = function(o) { return (o instanceof Object); };
         this.iO = this.isObject;
 
-        this.isArray = function(o) {
-            return (o instanceof Array);
-        };
+        this.isArray = function(o) { return (o instanceof Array); };
         this.iA = this.isArray;
 
-        this.isObjectNotArray = function(o) {
-            return (this.tk.iO(o) && !this.tk.iA(o));
-        };
+        this.isObjectNotArray = function(o) { return (this.tk.iO(o) && !this.tk.iA(o)); };
         this.iONA = this.isObjectNotArray;
 
-        this.isNotObjectNeitherArray = function(o) {
-            return !(this.tk.iO(o) || this.tk.iA(o));
-        };
+        this.isNotObjectNeitherArray = function(o) { return !(this.tk.iO(o) || this.tk.iA(o)); };
         this.iNONA = this.isNotObjectNeitherArray;
 
-        this.log = function(c) {
-            console.log(c);
-        };
+        this.log = function(c) { console.log(c); };
         this.lg = this.log;
 
         this.debug = function(m, c) {
-            var sufix = "[DBG:" +
-                c.gT() +
-                ":" +
-                this.tk.tx.pL(c.gSI().toString(16).toUpperCase(),
-                    "0",
-                    5) +
-                "] ";
-            
-            this.out(sufix + m);
+            if (this.st.vb.hDL()) {
+                var sufix = "[DBG:" +
+                    c.gT() +
+                    ":" +
+                    this.tk.tx.pL(c.gSI().toString(16).toUpperCase(),
+                        "0",
+                        5) +
+                    "] ";
+                
+                this.out(sufix + m);
+            }
         };
         this.db = this.debug;
 
-        this.objectString = function(c) {
-            if (this.tk.iO(c)) {
-                c = JSON.stringify(c);
+        this.audit = function(m, c) {
+            if (this.st.vb.hAL() && !this.st.vb.hDL()) {
+                var sufix = "[AUD:" +
+                    c.gT() +
+                    ":" +
+                    this.tk.tx.pL(c.gSI().toString(16).toUpperCase(),
+                        "0",
+                        5) +
+                    "] ";
+                
+                this.out(sufix + m);
             }
+        };
+        this.ad = this.audit;
+
+        this.objectString = function(c) {
+            if (this.tk.iO(c)) { c = JSON.stringify(c); }
             
             return c;
         };
@@ -223,29 +261,19 @@ var Sameness = (function() {
 
         this.info = "Sameness.context";
 
-        this.getTimestamp = function() {
-            return timestamp;
-        };
+        this.getTimestamp = function() { return timestamp; };
         this.gT = this.getTimestamp;
 
-        this.getStackIndex = function() {
-            return stackIndex;
-        };
+        this.getStackIndex = function() { return stackIndex; };
         this.gSI = this.getStackIndex;
 
-        this.incrementStackIndex = function() {
-            stackIndex++;
-        };
+        this.incrementStackIndex = function() { stackIndex++; };
         this.iSI = this.incrementStackIndex;
 
-        this.getFunction = function() {
-            return f;
-        };
+        this.getFunction = function() { return f; };
         this.gF = this.getFunction;
 
-        this.getArguments = function() {
-            return a;
-        };
+        this.getArguments = function() { return a; };
         this.gA = this.getArguments;
 
         return this;
@@ -255,36 +283,123 @@ var Sameness = (function() {
     this.settings = (function() {
         this.verbosity = (function() {
             var level = 0;
+            var quietLevel = 0;
+            var errorLevel = 10;
+            var warningLevel = 20;
+            var infoLevel = 30;
+            var auditLevel = 40;
+            var debugLevel = 50;
 
-            this.getQuietIndex = function() {
-                return 0;
+            this.setQuietLevel = function() {
+                level = quietLevel;
             };
+            this.sQL = this.setQuietLevel;
 
-            this.getErrorIndex = function() {
-                return 10;
+            this.setErrorLevel = function() {
+                level = errorLevel;
             };
+            this.sEL = this.setErrorLevel;
 
-            this.getWarningIndex = function() {
-                return 20;
+            this.setWarningLevel = function() {
+                level = warningLevel;
             };
+            this.sWL = this.setWarningLevel;
 
-            this.getLogIndex = function() {
-                return 30;
+            this.setInfoLevel = function() {
+                level = infoLevel;
             };
+            this.sIL = this.setInfoLevel;
 
-            this.getInfoIndex = function() {
-                return 40;
+            this.setAuditLevel = function() {
+                level = auditLevel;
             };
+            this.sAL = this.setAuditLevel;
 
-            this.getAuditIndex = function() {
-                return 50;
+            this.setDebugLevel = function() {
+                level = debugLevel;
             };
+            this.sDL = this.setDebugLevel;
 
-            this.getDebugIndex = function() {
-                return 60;
+            this.isQuietLevel = function() {
+                return (level == quietLevel);
             };
+            this.iQL = this.isQuietLevel;
+
+            this.isErrorLevel = function() {
+                return (level == errorLevel);
+            };
+            this.iEL = this.isErrorLevel;
+
+            this.isWarningLevel = function() {
+                return (level == warningLevel);
+            };
+            this.iWL = this.isWarningLevel;
+
+            this.isInfoLevel = function() {
+                return (level == infoLevel);
+            };
+            this.iIL = this.isInfoLevel;
+
+            this.isAuditLevel = function() {
+                return (level == auditLevel);
+            };
+            this.iAL = this.isAuditLevel;
+
+            this.isDebugLevel = function() {
+                return (level == debugLevel);
+            };
+            this.iDL = this.isDebugLevel;
+
+            this.hasQuietLevel = function() {
+                return (level == quietLevel);
+            };
+            this.hQL = this.hasQuietLevel;
+
+            this.hasErrorLevel = function() {
+                return (level >= errorLevel);
+            };
+            this.hEL = this.hasErrorLevel;
+
+            this.hasWarningLevel = function() {
+                return (level >= warningLevel);
+            };
+            this.hWL = this.hasWarningLevel;
+
+            this.hasInfoLevel = function() {
+                return (level >= infoLevel);
+            };
+            this.hIL = this.hasInfoLevel;
+
+            this.hasAuditLevel = function() {
+                return (level >= auditLevel);
+            };
+            this.hAL = this.hasAuditLevel;
+
+            this.hasDebugLevel = function() {
+                return (level >= debugLevel);
+            };
+            this.hDL = this.hasDebugLevel;
+
+            this.getVerbosityLevel = function() {
+                var cr = "Quiet";
+                
+                switch (level) {
+                    case 10: cr = "Error"; break;
+                    case 20: cr = "Warning"; break;
+                    case 30: cr = "Info"; break;
+                    case 40: cr = "Audit"; break;
+                    case 50: cr = "Debug"; break;
+                }
+
+                return cr;
+            };
+            this.gVL = this.getVerbosityLevel;
+
+            return this;
         })();
         this.vb = this.verbosity;
+
+        return this;
     })();
     this.st = this.settings;
 
@@ -297,8 +412,10 @@ var Sameness = (function() {
 
 var Ss = Sameness;
 
-var a = { p: 1, p2: [ 3, 2 ] };
+var a = { p: 1, p2: [ 3, 5 ] };
 var b = { p: 1, p2: [ 3, 2 ] };
 var c = a;
 
-console.log(Ss.isSame(a, b));
+Ss.st.vb.sDL();
+
+console.log(Ss.isIdentic(a, b));
