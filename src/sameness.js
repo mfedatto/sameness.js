@@ -125,17 +125,12 @@ var Sameness = (function() {
     this.isEquivalent = function(a, b) {
         throw { message: "Not implemented yet!" };
     };
-    this.iEv = this.isEquivalent;
+    this.iE = this.isEquivalent;
 
     this.isSubset = function(a, b) {
         throw { message: "Not implemented yet!" };
     };
     this.iSb = this.isSubset;
-
-    this.isSuperset = function(a, b) {
-        throw { message: "Not implemented yet!" };
-    };
-    this.iSp = this.isSuperset;
 
     this.toolkit = function() {
         function _getProps(o) {
@@ -406,6 +401,14 @@ var Sameness = (function() {
     this.out = function(m) {
         console.log(m);
     };
+
+    /* <==  C O N S T R U C T I O N  ==> */
+
+    (function() {
+        this.sIL();
+        this.out("Made with Sameness.js, a pure JavaScript object comparing library.");
+        this.out("http://github.com/mfedatto/sameness.js");
+    })();
 
     return this;
 })();
