@@ -4,10 +4,10 @@
 Sameness.js is a pure JavaScript object comparing library. It has the capability
 to check if objects ```a``` and ```b``` are:
 
-- The same object (see [isSame](#issame))
-- Identic objects (see [isIdentical](#isidentical))
-- Equivalent objects (see [isEquivalent](#isequivalent))
-- ```b``` a subset of ```a``` (see [isSubset](#issubset))
+- The same object ([isSame](#issame))
+- Identical objects ([isIdentical](#isidentical))
+- Equivalent objects ([isEquivalent](#isequivalent))
+- ```b``` a subset of ```a``` ([isSubset](#issubset))
 
 Sameness.js is exposed throug the ```Sameness``` variable.
 
