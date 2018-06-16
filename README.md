@@ -4,15 +4,14 @@
 Sameness.js is a pure JavaScript object comparing library. It has the capability
 to check if objects ```a``` and ```b``` are:
 
-- [x] The same object (see [isSame](#issame))
-- [x] Identic objects (see [isIdentical](#isidentical))
-- [x] Equivalent objects (see [isEquivalent](#isequivalent))
-- [ ] ```b``` a subset of ```a``` (see [isSubset](#issubset))
+- The same object (see [isSame](#issame))
+- Identic objects (see [isIdentical](#isidentical))
+- Equivalent objects (see [isEquivalent](#isequivalent))
+- ```b``` a subset of ```a``` (see [isSubset](#issubset))
 
-## ```Sameness```/```Ss```
+## ```Sameness```
 
-Sameness.js is exposed throug the ```Sameness``` and ```Ss``` variables.
-Almost all routines of Sameness.js.
+Sameness.js is exposed throug the ```Sameness``` variable.
 
 ### ```isSame```
 
@@ -25,6 +24,15 @@ Checks if ```a``` and ```b``` objects are identical objects. As being identical
 meaning they both have the same properties and data, even if they doesn't
 share the same instance or type. Very usefull for anonymous objects.
 
+```javascript
+var a = { p: 1 };
+var b = { p: 1 };
+var c = a;
+
+Sameness.isSame(a, b); // false
+Sameness.isSame(a, c); // true
+```
+
 ### ```isEquivalent```
 
 Checks if ```a``` and ```b``` objects are equivalent to eachother. As being
@@ -33,8 +41,30 @@ the same properties and data, even if its properties and array items aren't in
 the same sequence. Being equivalent mean ```a``` and ```b``` probably represents
 the same thing but each one was generated differently.
 
+```javascript
+var a = { p1: 9, p2: [ 1, 2, 3, 4, 5 ] };
+var b = { p1: 9, p2: [ 1, 2, 3, 4, 5 ] };
+var c = { p1: 9, p2: [ 5, 4, 3, 2, 1 ] };
+
+Sameness.isIdentical(a, b); // true
+Sameness.isIdentical(b, c); // false
+```
+
 ### ```isSubset```
 
 Cheks if ```b``` object is a subset of ```a``` object. As being a subset meaning
 all its properties and its data are completelly covered by the superset, but not
 meaning reciprocal is true.
+
+```javascript
+var a = { p1: 9, p2: [ 1, 2, 3, 4, 5 ] };
+var b = { p1: 9, p2: [ 1, 2, 3, 4, 5 ] };
+var c = { p1: 9, p2: [ 5, 4, 3, 2, 1 ] };
+var d = { p1: [ 5, 4, 3, 2, 1 ], p2: 9 };
+var e = { p2: [ 5, 4, 3, 2, 1 ], p1: 9, p3: [] };
+
+Sameness.isEquivalent(a, b); // true
+Sameness.isEquivalent(b, c); // true
+Sameness.isEquivalent(c, d); // true
+Sameness.isEquivalent(d, e); // false
+```

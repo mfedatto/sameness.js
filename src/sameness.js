@@ -45,9 +45,9 @@ var Sameness = (function() {
      * var b = {};
      * var c = -1;
      * 
-     * isObject(a); // true
-     * isObject(b); // false
-     * isObject(c); // false
+     * isArray(a); // true
+     * isArray(b); // false
+     * isArray(c); // false
      */
     function isArray(o) {
         return (o instanceof Array);
@@ -62,9 +62,9 @@ var Sameness = (function() {
      * var b = {};
      * var c = -1;
      * 
-     * isObject(a); // false
-     * isObject(b); // true
-     * isObject(c); // false
+     * isObjectNotArray(a); // false
+     * isObjectNotArray(b); // true
+     * isObjectNotArray(c); // false
      */
     function isObjectNotArray(o) {
         return (isObject(o) && !isArray(o));
@@ -88,8 +88,8 @@ var Sameness = (function() {
      * var b = { p: 1 };
      * var c = a;
      * 
-     * Ss.isSame(a, b); // false
-     * Ss.isSame(a, c); // true
+     * Sameness.isSame(a, b); // false
+     * Sameness.isSame(a, c); // true
      */
     this.isSame = function(a, b) {
         var cr = (a === b);
@@ -109,8 +109,8 @@ var Sameness = (function() {
      * var b = { p1: 9, p2: [ 1, 2, 3, 4, 5 ] };
      * var c = { p1: 9, p2: [ 5, 4, 3, 2, 1 ] };
      * 
-     * Ss.isIdentical(a, b); // true
-     * Ss.isIdentical(b, c); // false
+     * Sameness.isIdentical(a, b); // true
+     * Sameness.isIdentical(b, c); // false
      */
     this.isIdentical = function(a, b) {
         var cr;
@@ -165,12 +165,12 @@ var Sameness = (function() {
      * var b = { p1: 9, p2: [ 1, 2, 3, 4, 5 ] };
      * var c = { p1: 9, p2: [ 5, 4, 3, 2, 1 ] };
      * var d = { p1: [ 5, 4, 3, 2, 1 ], p2: 9 };
-     * var e = { p2: [ 5, 4, 3, 2, 1 ], p1: 9 };
+     * var e = { p2: [ 5, 4, 3, 2, 1 ], p1: 9, p3: [] };
      * 
-     * Ss.isIdentical(a, b); // true
-     * Ss.isIdentical(b, c); // true
-     * Ss.isIdentical(c, d); // false
-     * Ss.isIdentical(d, e); // true
+     * Sameness.isEquivalent(a, b); // true
+     * Sameness.isEquivalent(b, c); // true
+     * Sameness.isEquivalent(c, d); // true
+     * Sameness.isEquivalent(d, e); // false
      */
     this.isEquivalent = function(a, b) {
         var cr;
@@ -215,6 +215,10 @@ var Sameness = (function() {
 
                     bpBuffer = skippedBp;
                 }
+
+                if (bpBuffer.length > 0) {
+                    cr = false;
+                }
             }
             else {
                 var aBuffer = [];
@@ -248,23 +252,115 @@ var Sameness = (function() {
 
                     bBuffer = skippedB;
                 }
+
+                if (bBuffer.length > 0) {
+                    cr = false;
+                }
             }
         }
 
         return cr;
     };
 
+    /**
+     * Checks if a and b objects are equivalent to eachother. As being
+     * equivalent meaning that they may not share identical structures but both
+     * have the same properties and data, even if its properties and array items
+     * aren't in the same sequence. Being equivalent mean a and b probably
+     * represents the same thing but each one was generated differently.
+     * @param {*} a first object from comparing pair
+     * @param {*} b second object from comparing pair
+     * @author Maurício Fedatto
+     * @example
+     * var a = { p1: 9, p2: [ 1, 2, 3, 4, 5, 6, 7 ], p3: "z", p4: { p5: [] } };
+     * var b = { p1: 9, p2: [ 1, 2, 3, 4, 5 ], p3: "z" };
+     * var c = { p1: 9, p2: [ 5, 4, 3, 2, 1 ] };
+     * 
+     * Sameness.isSubset(a, b); // true
+     * Sameness.isSubset(b, c); // true
+     * Sameness.isSubset(a, c); // true
+     * Sameness.isSubset(b, a); // false
+     */
     this.isSubset = function(a, b) {
-        throw { message: "Not implemented yet!" };
+        var cr;
+
+        cr = (a == b);
+
+        if (!cr) {
+            if (isObjectNotArray(a) && isObjectNotArray(b)) {
+                var ap = getProps(a);
+                var bp = getProps(b);
+                var apBuffer = [];
+                var bpBuffer = [];
+
+                for (var i = 0; i < ap.length; i++) apBuffer.push(ap[i]);
+                for (var j = 0; j < bp.length; j++) bpBuffer.push(bp[j]);
+
+                cr = true;
+
+                while (bpBuffer.length > 0) {
+                    var watchingBp = bpBuffer.pop();
+                    var skippedAp = [];
+                    var foundP = false;
+
+                    for (var k = 0; k < apBuffer.length; k++) {
+                        var watchingAp = apBuffer[k];
+
+                        if (!foundP &&
+                            (a[watchingAp] == b[watchingBp] ||
+                                this.isSubset(a[watchingAp], b[watchingBp]))) {
+                            foundP = true;
+                        }
+                        else {
+                            skippedAp.push(watchingAp);
+                        }
+                    }
+
+                    if (!foundP) {
+                        cr = false;
+                        break;
+                    }
+
+                    apBuffer = skippedAp;
+                }
+            }
+            else {
+                var aBuffer = [];
+                var bBuffer = [];
+
+                for (var l = 0; l < a.length; l++) aBuffer.push(a[l]);
+                for (var m = 0; m < b.length; m++) bBuffer.push(b[m]);
+
+                cr = true;
+
+                while (bBuffer.length > 0) {
+                    var watchingB = bBuffer.pop();
+                    var skippedA = [];
+                    var found = false;
+
+                    for (var n = 0; n < aBuffer.length; n++) {
+                        var watchingA = aBuffer[n];
+
+                        if (watchingA == watchingB && !found) {
+                            found = true;
+                        }
+                        else {
+                            skippedA.push(watchingA);
+                        }
+                    }
+
+                    if (!found) {
+                        cr = false;
+                        break;
+                    }
+
+                    aBuffer = skippedA;
+                }
+            }
+        }
+
+        return cr;
     };
 
     return this;
 })();
-
-var Ss = Sameness;
-
-var a = { p1: "x", p2: [ "z", "z", -1 ] };
-var b = { p2: [ "z", -1, "z" ], p1: "x" };
-var c = a;
-
-console.log(Ss.isEquivalent(a, b));
