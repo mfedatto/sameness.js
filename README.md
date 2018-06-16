@@ -6,7 +6,7 @@ to check if objects ```a``` and ```b``` are:
 
 - [x] The same object (see [isSame](#issame))
 - [x] Identic objects (see [isIdentical](#isidentical))
-- [ ] Equivalent objects (see [isEquivalent](#isequivalent))
+- [x] Equivalent objects (see [isEquivalent](#isequivalent))
 - [ ] ```b``` a subset of ```a``` (see [isSubset](#issubset))
 
 ## ```Sameness```/```Ss```
