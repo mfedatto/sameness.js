@@ -9,11 +9,9 @@ to check if objects ```a``` and ```b``` are:
 - Equivalent objects (see [isEquivalent](#isequivalent))
 - ```b``` a subset of ```a``` (see [isSubset](#issubset))
 
-## ```Sameness```
-
 Sameness.js is exposed throug the ```Sameness``` variable.
 
-### ```isSame```
+## ```isSame```
 
 Checks if ```a``` and ```b``` objects are the same object. As being the same
 meaning they both reffer to the same instance of an object.
@@ -27,7 +25,7 @@ Sameness.isSame(a, b); // false
 Sameness.isSame(a, c); // true
 ```
 
-### ```isIdentical```
+## ```isIdentical```
 
 Checks if ```a``` and ```b``` objects are identical objects. As being identical
 meaning they both have the same properties and data, even if they doesn't
@@ -42,7 +40,7 @@ Sameness.isIdentical(a, b); // true
 Sameness.isIdentical(b, c); // false
 ```
 
-### ```isEquivalent```
+## ```isEquivalent```
 
 Checks if ```a``` and ```b``` objects are equivalent to eachother. As being
 equivalent meaning that they may not share identical structures but both have
@@ -63,7 +61,7 @@ Sameness.isEquivalent(c, d); // true
 Sameness.isEquivalent(d, e); // false
 ```
 
-### ```isSubset```
+## ```isSubset```
 
 Cheks if ```b``` object is a subset of ```a``` object. As being a subset meaning
 all its properties and its data are completelly covered by the superset, but not
