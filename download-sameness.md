@@ -13,4 +13,6 @@ Sameness.js is released under the [MIT license](https://raw.githubusercontent.co
 
 [![Git clone](/img/git-clone.png) Git repository](https://github.com/mfedatto/sameness.js)
 
+[![npm install](/img/npm-install.png) npm i sameness.js](https://www.npmjs.com/package/sameness.js)
+
 Hope it helps.
