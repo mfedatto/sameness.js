@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Use Sameness.js
+title: Usage
 subtitle: How Sameness.js works and how to use it
 image: /img/using-sameness.png
 ---
@@ -81,5 +81,7 @@ Sameness.isSubset(b, c); // true
 Sameness.isSubset(a, c); // true
 Sameness.isSubset(b, a); // false
 ```
+
+[Download Sameness.js]({{ site.baseurl }}/download-sameness)
 
 Hope it helps.
