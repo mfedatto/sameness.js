@@ -1,7 +1,7 @@
 # --- General options --- #
 
 # If you are building a GitHub project page then use these settings:
-url: "http://mfedatto.com/sameness.js"
+url: "http://mfedatto.github.io/sameness.js"
 baseurl: "/sameness.js"
 
 title: Sameness.js
@@ -82,7 +82,7 @@ share-links-active:
 
 # How to display the link to the website in the footer
 # Remove this if you don't want a link in the footer
-url-pretty: "mfedatto.com/sameness.js"  # eg. "deanattali.com/beautiful-jekyll"
+#url-pretty: "mfedatto.com/sameness.js"  # eg. "deanattali.com/beautiful-jekyll"
 
 # --- Web Statistics Section --- #
 
