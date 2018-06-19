@@ -1,7 +1,7 @@
 # --- General options --- #
 
 # If you are building a GitHub project page then use these settings:
-url: "http://mfedatto.github.io/sameness.js"
+url: "http://mfedatto.com/sameness.js"
 baseurl: "/sameness.js"
 
 title: Sameness.js
